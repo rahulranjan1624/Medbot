@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<o:OfficeConfig xmlns:o="urn:schemas-microsoft-com:office:office">
+  <o:services>
+    <o:service o:name="GetFederationProvider">
+      <o:url>https://odc.officeapps.live.com/odc/v2.1/federationProvider</o:url>
+    </o:service>
+  </o:services>
+</o:OfficeConfig>

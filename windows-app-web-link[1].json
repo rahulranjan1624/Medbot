@@ -1,0 +1,5 @@
+[{
+  "packageFamilyName": "MicrosoftTeams_8wekyb3d8bbwe",
+  "paths": [ "*" ],
+  "excludePaths" : [ "/_*", "/meetingOptions*","/l/community" ]
+}]
