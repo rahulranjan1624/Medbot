@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MedBot - Your Medical Assistant</title>
+
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Dark/Light Mode */
+        :root {
+            --background-color-light: #f4f8f9;
+            --background-color-dark: #2c2c2c;
+            --text-color-light: #000;
+            --text-color-dark: #fff;
+            --background-color: var(--background-color-light);
+            --text-color: var(--text-color-light);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: var(--background-color-dark);
+                --text-color: var(--text-color-dark);
+            }
+        }
+
+        /* Chat Container */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            max-width: 600px;
+            height: 100vh;
+            margin: 0 auto;
+            background-color: var(--background-color);
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Chat Box (for messages) */
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        /* Message Styles */
+        .message {
+            display: flex;
+            margin: 10px 0;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .message.bot .message-content {
+            background-color: #e1e1e1;
+            color: #333;
+        }
+
+        /* Chat Input Area */
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: #fafafa;
+            border-top: 1px solid #ddd;
+        }
+
+        #query {
+            flex-grow: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #query:focus {
+            border-color: #007bff;
+        }
+
+        #send-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-left: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #send-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            #query {
+                font-size: 14px;
+            }
+
+            #send-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #query {
+                font-size: 12px;
+            }
+
+            #send-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* Footer Styles */
+        .footer {
+            padding: 10px;
+            text-align: center;
+            background-color: #fafafa;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .footer a {
+            margin: 0 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Chat Box -->
+        <div id="chat-box" class="chat-box">
+            <div class="message bot">
+                <div class="message-content">
+                    MedBot: Hello! I am MedBot, your personal medical assistant. How can I assist you with your health today?
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input">
+            <input id="query" type="text" placeholder="Ask me about symptoms, treatments, or general health advice..." autocomplete="off">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="footer" style="color: black;">
+            <p style="color: black;">Developed by Kanishk Jain</p>
+            <p>
+                <a href="https://www.linkedin.com/in/kanishk-jain-a55746212" target="_blank" style="color: black; text-decoration: none;">Connect on LinkedIn</a>
+            </p>
+        </div>        
+    </div>
+
+    <script>
+        // Function to handle sending a message
+        function sendMessage() {
+            const queryInput = document.getElementById("query");
+            const query = queryInput.value.trim();
+
+            if (query === "") {
+                return; // Don't send empty messages
+            }
+
+            // Append user message to chatbox
+            appendMessage(query, "user");
+
+            // Clear input box
+            queryInput.value = "";
+
+            // Simulate bot response (Replace with actual server interaction)
+            setTimeout(() => {
+                fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `query=${encodeURIComponent(query)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const formattedResponse = formatResponse(data.response);
+                    appendMessage(formattedResponse, "bot");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    appendMessage("Oops! Something went wrong.", "bot");
+                });
+            }, 1000);
+        }
+
+        // Function to append a message to the chatbox
+        function appendMessage(message, sender) {
+            const chatBox = document.getElementById("chat-box");
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", sender);
+
+            const contentDiv = document.createElement("div");
+            contentDiv.classList.add("message-content");
+
+            // Allow HTML rendering for bot's response (with proper sanitation)
+            if (sender === "bot") {
+                contentDiv.innerHTML = message;
+            } else {
+                contentDiv.textContent = message;
+            }
+
+            messageDiv.appendChild(contentDiv);
+            chatBox.appendChild(messageDiv);
+
+            // Scroll to the bottom of the chatbox
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function formatResponse(response) {
+            // Replace **text** with bold
+            response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Replace *text* with italics
+            response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Replace line breaks with <br> tags
+            response = response.replace(/\n/g, '<br>');
+
+            return response;
+        }
+
+        // Enable "Enter" key to send message
+        document.getElementById("query").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

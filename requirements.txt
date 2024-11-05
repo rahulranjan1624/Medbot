@@ -1,0 +1,9 @@
+Flask
+Flask-Session
+python-dotenv
+pandas
+spacy
+sentence-transformers
+numpy
+langchain-google-genai
+torch  # Required by sentence-transformers
